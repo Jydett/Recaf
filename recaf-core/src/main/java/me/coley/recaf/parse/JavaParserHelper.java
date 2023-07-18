@@ -16,6 +16,8 @@ import me.coley.recaf.code.MethodInfo;
 import me.coley.recaf.parse.evaluation.ExpressionEvaluator;
 import me.coley.recaf.util.RegexUtil;
 import me.coley.recaf.util.StringUtil;
+import me.coley.recaf.util.logging.Logging;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +28,16 @@ import java.util.Optional;
  * @author Matt Coley
  */
 public class JavaParserHelper {
+
+	private static final Logger logger = Logging.get(JavaParserHelper.class);
+
 	private final WorkspaceSymbolSolver symbolSolver;
 	private final JavaParser parser;
 
 	private JavaParserHelper(WorkspaceSymbolSolver symbolSolver) {
 		this.symbolSolver = symbolSolver;
 		parser = new JavaParser(new ParserConfiguration()
-				.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_16)
+				.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_8)
 				.setSymbolResolver(this.symbolSolver));
 	}
 
@@ -88,6 +93,10 @@ public class JavaParserHelper {
 				// The unit is usable, but may contain some localized problems.
 				// Check if we want to try to resolve any reported problems.
 				if (tryRecover && !result.getProblems().isEmpty()) {
+					logger.info("{} problems found when parsing class", result.getProblems().size());
+					for (Problem problem : result.getProblems()) {
+						logger.info("\t - {}", problem);
+					}
 					return new JavaParserRecovery(this).parseClassWithRecovery(code, problems);
 				}
 				// Update unit and roll with whatever we got.
@@ -124,6 +133,10 @@ public class JavaParserHelper {
 		// This isn't perfect, but should replace most basic generic type usage
 		Matcher matcher = RegexUtil.getMatcher("(?:<)((?:(?!\\1).)*>)", code);
 		while (matcher.find()) {
+			if (matcher.toString().matches(".*([*+-/^:]|&{2}|\\|{2}).*")) {
+				logger.debug("False positive {}", matcher);
+				continue;
+			}
 			String temp = code.substring(0, matcher.start());
 			String filler = StringUtil.repeat(" ", matcher.length());
 			code = temp + filler + code.substring(matcher.end());
