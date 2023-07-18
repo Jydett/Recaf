@@ -70,7 +70,7 @@ subprojects {
         def dexVersion = '2.5.2'
         def dudeVersion = '1.10.2'
         def jadxVersion = '1.4.4'
-        def jpVersion = '3.24.4'
+        def jpVersion = '3.25.4'
         def junitVersion = '5.9.1'
         def lljzipVersion = '1.1.8'
         def ssvmVersion = '1.9.0.3'
