@@ -6,20 +6,20 @@
     -fx-border-width: 1;
 }
 .graph-node-text {
-    -fx-font-family: monospace;
+    -fx-font-family: "JetBrains Mono", monospace;
     -fx-border: none;
     -fx-padding: 8;
-	-fx-background-color: rgb(45, 45, 46);
+	-fx-background-color: rgb(43, 43, 43);
 	-fx-accent: rgb(255, 97, 117);
 	-fx-fill: rgb(224, 226, 228);
 }
 .graph-node-text-virt {
-    -fx-font-family: monospace;
+    -fx-font-family: "JetBrains Mono", monospace;
     -fx-line-spacing: 1;
     -fx-tab-size: 4;
     -fx-line-spacing: 1;
     -fx-padding: -0.5 0 -0.5 0;
-    -fx-background-color: rgb(45, 45, 46);
+    -fx-background-color: rgb(43, 43, 43);
     -fx-accent: rgb(255, 97, 117);
     -fx-fill: rgb(224, 226, 228);
 }

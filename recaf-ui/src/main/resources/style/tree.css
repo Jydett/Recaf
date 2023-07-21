@@ -16,7 +16,7 @@
 .workspace-tree {
     /* Match tab color on top, black on bottom */
     -fx-border-width: 1 0 1 0;
-    -fx-border-color: rgb(45, 45, 46) black black black;
+    -fx-border-color: rgb(43, 43, 43) black black black;
 }
 .workspace-overlay {
     -fx-padding: 15;

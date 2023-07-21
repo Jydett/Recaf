@@ -1,11 +1,11 @@
 /* nodes */
 .styled-text-area {
-	-fx-background-color: rgb(45, 45, 46);
+	-fx-background-color: rgb(43, 43, 43);
 	-fx-accent: rgb(255, 97, 117);
 	-fx-fill: rgb(224, 226, 228);
 }
 .paragraph-box {
-	-fx-background-color: rgb(45, 45, 46);
+	-fx-background-color: rgb(43, 43, 43);
 }
 .paragraph-box:has-caret {
     -fx-background-color: rgb(50, 50, 51);
@@ -34,17 +34,17 @@
     -fx-fill: rgb(216, 216, 216);
 }
 .code-area .keyword {
-    -fx-fill: rgb(0, 175, 255);
+    -fx-fill: rgb(204, 120, 50);
     -fx-font-weight: bold;
 }
 .code-area .string {
-    -fx-fill: rgb(175, 215, 223);
+    -fx-fill: rgb(106, 135, 89);
 }
 .code-area .constant {
-	-fx-fill: rgb(125, 215, 215);
+	-fx-fill: rgb(104, 151, 187);
 }
 .code-area .annotation {
-    -fx-fill: rgb(0, 215, 215);
+    -fx-fill: rgb(187, 181, 41);
 }
 .code-area .comment-javadoc {
 	-fx-fill: rgb(105, 135, 215);

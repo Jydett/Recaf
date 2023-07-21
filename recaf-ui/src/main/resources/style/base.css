@@ -1,6 +1,6 @@
 .root {
-	-fx-base: rgb(45, 45, 46);
-	-fx-background: rgb(45, 45, 46);
+	-fx-base: rgb(43, 43, 43);
+	-fx-background: rgb(43, 43, 43);
 	/* Brighten controls */
 	-fx-color: derive(-fx-base, -40%);
 	/* Control background */
@@ -8,7 +8,7 @@
 	/* Alternative control background (rows) */
 	-fx-control-inner-background-alt: derive(-fx-control-inner-background, 2.5%);
 	/* Text colors */
-	-fx-light-text-color: rgb(220, 220, 220);
+	-fx-light-text-color: rgb(169, 183, 198);
 	-fx-mid-text-color: rgb(100, 100, 100);
 	-fx-dark-text-color: rgb(20, 20, 20);
 	/* Accent colors */
