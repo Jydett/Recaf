@@ -1,7 +1,13 @@
 package me.coley.recaf.parse;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
+import java.util.Optional;
+import java.util.function.Function;
 import me.coley.recaf.Controller;
 import me.coley.recaf.presentation.EmptyPresentation;
 import me.coley.recaf.workspace.Workspace;
@@ -12,16 +18,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.util.Optional;
-import java.util.function.Function;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Tests for {@link JavaParserHelper}
  */
 @Execution(ExecutionMode.SAME_THREAD)
 public class JavaParserRecoveryTests {
+    
 	private static final String helloWorld = "class HelloWorld {\n" +
 			"    public static void main(String[] args){\n" +
 			"        System.out.println(\"Hello\");\n" +
@@ -52,6 +54,65 @@ public class JavaParserRecoveryTests {
 		controller = new Controller(new EmptyPresentation());
 		controller.setWorkspace(workspace);
 	}
+
+    @Test
+    void dontMistakeComparisonForGeneric() {
+        String code = "class Clazz {\n"
+                    + "   public boolean test(int x) {\n"
+                    + "      int a = 0, b = 0;\n"
+                    + "      if (a < x && x > b) {\n"
+                    + "          return false;\n"
+                    + "      }\n"
+                    + "      return true;\n"
+                    + "   }\n"
+                    + "}";
+        var res = JavaParserHelper.create(controller).parseClass(code);
+        assertTrue(res.getResult().isPresent());
+        assertEquals("class Clazz {\n"
+                         + "\n"
+                         + "    public boolean test(int x) {\n"
+                         + "        int a = 0, b = 0;\n"
+                         + "        if (a < x && x > b) {\n"
+                         + "            return false;\n"
+                         + "        }\n"
+                         + "        return true;\n"
+                         + "    }\n"
+                         + "}\n", res.getResult().get().toString());
+    }
+
+    @Test
+    void removeGeneric() {
+        String code = "class Clazz {\n"
+                          + "     public void test() {\n"
+                          + "         List<String> test = null;\n"
+                          + "     }\n"
+                          + "}";
+        var res = JavaParserHelper.create(controller).parseClass(code);
+        assertTrue(res.getResult().isPresent());
+        assertEquals("class Clazz {\n"
+                         + "\n"
+                         + "    public void test() {\n"
+                         + "        List test = null;\n"
+                         + "    }\n"
+                         + "}\n", res.getResult().get().toString());
+    }
+    
+    @Test
+    void removeDoubleGeneric() {
+        String code = "class Clazz {\n"
+                    + "     public void test() {\n"
+                    + "         List<List<Map<String, String>>> test = null;\n"
+                    + "     }\n"
+                    + "}";
+        var res = JavaParserHelper.create(controller).parseClass(code);
+        assertTrue(res.getResult().isPresent());
+        assertEquals("class Clazz {\n"
+                         + "\n"
+                         + "    public void test() {\n"
+                         + "        List test = null;\n"
+                         + "    }\n"
+                         + "}\n", res.getResult().get().toString());
+    }
 
 	@Test
 	void missingSemicolonOnStatement() {
