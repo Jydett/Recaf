@@ -300,6 +300,7 @@ tree.files=Files
 tree.prompt=Drag your files here
 tree.hidelibs=Hide libraries
 tree.casesensitive=Filter case sensitivity
+tree.matchword=Match whole word
 
 ##### Config
 conf.display=Appearance

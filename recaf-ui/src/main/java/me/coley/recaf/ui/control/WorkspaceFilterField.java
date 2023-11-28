@@ -21,6 +21,7 @@ public class WorkspaceFilterField extends TextField {
 	private static final char TAG_INCLUDE_PREFIX = '+';
 	private static final char TAG_EXCLUDE_PREFIX = '-';
 	private final Supplier<Boolean> isCaseSensitive;
+	private final Supplier<Boolean> isMatchWorlds;
 
 	/**
 	 * @param tree
@@ -29,6 +30,7 @@ public class WorkspaceFilterField extends TextField {
 	public WorkspaceFilterField(WorkspaceTreeWrapper tree) {
 		setPromptText("Filter: Class/file name..."); // TODO: Add "+tag -tag" when metadata system is set up
 		isCaseSensitive = tree::isCaseSensitive;
+		isMatchWorlds = tree::isMatchWorlds;
 		NodeEvents.addKeyPressHandler(this, e -> {
 			if (e.getCode() == KeyCode.ESCAPE) {
 				setText("");
@@ -37,6 +39,8 @@ public class WorkspaceFilterField extends TextField {
 				e.consume();
 			}
 		});
+		tree.caseSensitiveProperty().addListener((observable, oldValue, newValue) -> updateSearch(tree, textProperty().getValue()));
+		tree.matchWorldsSelectedPropertyProperty().addListener((observable, oldValue, newValue) -> updateSearch(tree, textProperty().getValue()));
 		textProperty().addListener((observable, old, current) -> updateSearch(tree, current));
 		getStyleClass().add("filter-field");
 	}
@@ -81,13 +85,25 @@ public class WorkspaceFilterField extends TextField {
 			return false;
 		}
 		for (String name : names) {
-			if (isCaseSensitive.get()) {
-				if (itemName.contains(name)) {
-					return true;
+			if (isMatchWorlds.get()) {
+				if (isCaseSensitive.get()) {
+					if (itemName.equals(name)) {
+						return true;
+					}
+				} else {
+					if (itemName.equalsIgnoreCase(name)) {
+						return true;
+					}
 				}
 			} else {
-				if (itemName.toLowerCase().contains(name.toLowerCase())) {
-					return true;
+				if (isCaseSensitive.get()) {
+					if (itemName.contains(name)) {
+						return true;
+					}
+				} else {
+					if (itemName.toLowerCase().contains(name.toLowerCase())) {
+						return true;
+					}
 				}
 			}
 		}

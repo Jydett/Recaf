@@ -34,6 +34,7 @@ public class WorkspaceTreeWrapper extends StackPane implements FileDropListener 
 	private final WorkspaceTree tree = new WorkspaceTree(CellOriginType.WORKSPACE_NAVIGATION);
 	private final SimpleBooleanProperty hideLibrarySubElements = new SimpleBooleanProperty();
 	private final SimpleBooleanProperty caseSensitivity = new SimpleBooleanProperty();
+	private final SimpleBooleanProperty matchWorldsSelected = new SimpleBooleanProperty();
 	private Node overlay;
 	private Workspace workspace;
 
@@ -121,12 +122,19 @@ public class WorkspaceTreeWrapper extends StackPane implements FileDropListener 
 	public boolean isCaseSensitive() {
 		return caseSensitivity.get();
 	}
+	public boolean isMatchWorlds() {
+		return matchWorldsSelected.get();
+	}
 
 	/**
 	 * @return Property of {@link #isHideLibrarySubElements()}.
 	 */
 	public SimpleBooleanProperty hideLibrarySubElementsProperty() {
 		return hideLibrarySubElements;
+	}
+
+	public SimpleBooleanProperty matchWorldsSelectedPropertyProperty() {
+		return matchWorldsSelected;
 	}
 
 	/**
@@ -141,6 +149,10 @@ public class WorkspaceTreeWrapper extends StackPane implements FileDropListener 
 	 */
 	public void toggleHideLibraries() {
 		setHideLibraries(!hideLibrarySubElements.get());
+	}
+
+	public void toggleMatchWorldsSelected() {
+		setMatchWorldsSelected(!matchWorldsSelected.get());
 	}
 
 	/**
@@ -165,6 +177,14 @@ public class WorkspaceTreeWrapper extends StackPane implements FileDropListener 
 	 */
 	public void setCaseSensitivity(boolean caseSensitivity) {
 		this.caseSensitivity.set(caseSensitivity);
+	}
+
+	/**
+	 * @param matchWorldsSelected
+	 * 		New matchWorldsSelected option.
+	 */
+	public void setMatchWorldsSelected(boolean matchWorldsSelected) {
+		this.matchWorldsSelected.set(matchWorldsSelected);
 	}
 
 	/**

@@ -100,6 +100,8 @@ public class Icons {
 	public static final String CODE = "icons/code.png";
 	public static final String SYNTHETIC = "icons/synthetic.png";
 	public static final String EYE = "icons/eye.png";
+	public static final String WORDS = "icons/words.png";
+	public static final String WORDS_SELECTED = "icons/wordsSelected.png";
 	public static final String EYE_DISABLED = "icons/eye-disabled.png";
 	public static final String CASE_SENSITIVITY = "icons/case-sensitive.png";
 	public static final String REFERENCE = "icons/ref.png";

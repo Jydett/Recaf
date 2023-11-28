@@ -20,6 +20,7 @@ import static me.coley.recaf.ui.util.Icons.getIconView;
 public class WorkspaceButtonsPane extends BorderPane {
 	private final Button btnHide;
 	private final Button btnCase;
+	private final Button btnWorlds;
 
 	/**
 	 * @param tree
@@ -28,7 +29,8 @@ public class WorkspaceButtonsPane extends BorderPane {
 	public WorkspaceButtonsPane(WorkspaceTreeWrapper tree) {
 		setCenter(new HBox(
 				btnHide = createHideLibraries(tree),
-				btnCase = createCaseSensitive(tree)
+				btnCase = createCaseSensitive(tree),
+				btnWorlds = createMatchWords(tree)
 		));
 	}
 
@@ -57,6 +59,21 @@ public class WorkspaceButtonsPane extends BorderPane {
 		button.graphicProperty().bind(Bindings.createObjectBinding(
 				() -> getIconView(hideProperty.get() ? Icons.EYE_DISABLED : Icons.EYE),
 				hideProperty
+		));
+		return button;
+	}
+
+	private Button createMatchWords(WorkspaceTreeWrapper tree) {
+		Button button = new Button();
+		Tooltip tooltip = new Tooltip();
+		tooltip.textProperty().bind(Lang.getBinding("tree.matchword"));
+		button.setTooltip(tooltip);
+		button.setGraphic(getIconView(Icons.WORD));
+		button.setOnAction(e -> tree.toggleMatchWorldsSelected());
+		SimpleBooleanProperty matchWorldsSelectedPropertyProperty = tree.matchWorldsSelectedPropertyProperty();
+		button.graphicProperty().bind(Bindings.createObjectBinding(
+				() -> getIconView(matchWorldsSelectedPropertyProperty.get() ? Icons.WORDS_SELECTED : Icons.WORD),
+				matchWorldsSelectedPropertyProperty
 		));
 		return button;
 	}
