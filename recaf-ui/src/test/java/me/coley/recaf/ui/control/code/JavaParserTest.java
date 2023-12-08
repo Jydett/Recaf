@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import me.coley.recaf.ui.control.code.LanguageStyler.Section;
 import org.junit.jupiter.api.Assertions;
@@ -37,6 +38,62 @@ class JavaParserTest {
 				return CompletableFuture.completedFuture(null);
 			}
 		});
+	}
+
+	@Test
+	public void testJavaConstantStyling_doubleConstant() {
+		assertStyledSections(generateDoubleCombinations().stream().map(validDoubleDeclaration -> {
+            languageStyler.styleCompleteDocument(validDoubleDeclaration);
+			//valid declaration stating with a . (ie: .05d) should not color the point
+			if (validDoubleDeclaration.startsWith(".")) return validDoubleDeclaration.substring(1);
+			return validDoubleDeclaration;
+        }).toArray(String[]::new));
+	}
+
+	public static List<String> generateDoubleCombinations() {
+		List<String> combinations = new ArrayList<>();
+		int length = 3;
+		// Generate base numbers without exponent
+		for (int i = 1; i <= length; i++) {
+			String number = "5".repeat(i);
+			combinations.add(number + ".0"); // Whole number
+			for (int j = 1; j < i; j++) {
+				// Insert decimal point at different positions
+				String withDecimal = number.substring(0, j - 1) + "." + number.substring(j);
+				combinations.add(withDecimal);
+				if (j > 1) {//more than on digit in the whole part
+					combinations.add(5 + "_" + withDecimal);
+					combinations.add(5 + "__" + withDecimal);
+					combinations.add(5 + "_" + 5 + "_" + withDecimal + "_" + 0 + "_" + 1);
+				}
+				combinations.add(withDecimal + "_" + 5);
+				combinations.add(withDecimal + "_" + 0 + "_" + 1);
+			}
+		}
+		// Generate numbers with exponent part
+		List<String> withExponents = new ArrayList<>();
+		for (String base : combinations) {
+			// Add exponent variations to each base number
+			for (int i = 1; i <= length; i++) {
+				String exponent = "1".repeat(i);
+				withExponents.add(base + "e" + exponent);
+				withExponents.add(base + "e+" + exponent);
+				withExponents.add(base + "e-" + exponent);
+				withExponents.add(base + "e" + 1 + "_" + 0);
+				withExponents.add(base + "e" + 1 + "__" + 0);
+				withExponents.add(base + "e" + 1 + "_00_" + 1);
+				withExponents.add(base + "e+" + 1 + "_" + 1);
+				withExponents.add(base + "e-" + 0 + "_" + 1);
+			}
+		}
+		combinations.addAll(withExponents);
+		var endCharCombination = new ArrayList<String>();
+		for (String combination : combinations) {
+			endCharCombination.add(combination + "d");
+			endCharCombination.add(combination + "D");
+		}
+		combinations.addAll(endCharCombination);
+		return combinations;
 	}
 
 	@Test
@@ -93,9 +150,12 @@ class JavaParserTest {
 												 + "        String notAConstant = \"Variable string\";\n"
 												 + "        int result = someMethod(HEX_CONSTANT, LONG_CONSTANT, null);\n"
 												 + "        char[] charArray = {CHAR_CONSTANT, ESCAPED_CHAR_CONSTANT};\n"
-												 + "\n"
-												 + "    }\n"
-												 + "\n"
+												 +
+												 "    }"
+												 +
+												 "\n"
+												 +
+												 "\n"
 												 + "    /* this is a wonderful javadoc comment */\n"
 												 + "    private static int someMethod(int hex, long constant) {\n"
 												 + "        // Imagine some complex logic here that uses the constants provided\n"
@@ -103,9 +163,13 @@ class JavaParserTest {
 												 + "    }\n"
 												 + "}");
 
-		Assertions.assertEquals(String.join("\n", new String[]{
+		assertStyledSections(new String[]{
 			"true", "false", "42", "123456789l", "0757", "0x1a2b3c",
 			"0b101011", "3.14159", "1.234e2", "2.71828f", "'A'", "'\\n'",
-			".6F", ".8D", "0L", "false", "true", "1", "0", "null"}), styledSections.stream().map(s -> s.text).collect(Collectors.joining("\n")));
+			".6F", ".8D", "0L", "false", "true", "1", "0", "null"});
+	}
+
+	private static void assertStyledSections(String[] expectedStyledSections) {
+		Assertions.assertEquals(String.join("\n", expectedStyledSections), styledSections.stream().map(s -> s.text).collect(Collectors.joining("\n")), "The declaration should have been styled !");
 	}
 }
